@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar Tabela para Excel</title>
+</head>
+<body>
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>João</td>
+                <td>25</td>
+                <td>joao@example.com</td>
+            </tr>
+            <tr>
+                <td>Maria</td>
+                <td>30</td>
+                <td>maria@example.com</td>
+            </tr>
+            <tr>
+                <td>Carlos</td>
+                <td>28</td>
+                <td>carlos@example.com</td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="exportarTabela()">Exportar para Excel</button>
+
+    <script src="xlsx.full.min.js"></script>
+    <script>
+        function exportarTabela() {
+            // Obter a tabela HTML
+            var tabela = document.getElementById('tabela');
+
+            // Converter a tabela para um workbook
+            var wb = XLSX.utils.table_to_book(tabela, {sheet: "Sheet1"});
+
+            // Definir estilo de célula
+            var ws = wb.Sheets["Sheet1"];
+            var range = XLSX.utils.decode_range(ws['!ref']);
+            for(var R = range.s.r; R <= range.e.r; ++R) {
+                for(var C = range.s.c; C <= range.e.c; ++C) {
+                    var cell_address = {c:C, r:R};
+                    var cell_ref = XLSX.utils.encode_cell(cell_address);
+
+                    if(!ws[cell_ref]) continue;
+
+                    // Definir a cor de fundo
+                    ws[cell_ref].s = {
+                        fill: {
+                            fgColor: { rgb: "FFFF00" } // Amarelo claro
+                        }
+                    };
+                }
+            }
+
+            // Gerar arquivo Excel
+            XLSX.writeFile(wb, 'tabela.xlsx');
+        }
+    </script>
+</body>
+</html>
